@@ -1,221 +1,461 @@
-const defaultTappingPrompt = "功德 + 1，佛祖保佑你";
-let tappingPrompt = localStorage.getItem("tappingPrompt");
-!tappingPrompt && (tappingPrompt = defaultTappingPrompt);
-const siteUrl = "https://fish.leixf.cn",
-  instructionsHtml = "\n  <p>敲木鱼通常是佛教和道教仪式中的一部分。它是一种传统乐器，形状像木鱼，通常由木头制成。</p>\n  <p>复制以下地址，分享给你的好友吧！</p>\n  <div class=\"ui-input ui-input-search\" align=\"right\">\n    <input type=\"search\" readonly value=\"" + siteUrl + "\">\n    <svg onclick=\"instructionsCopy()\" class=\"ui-icon-search\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" p-id=\"4271\" width=\"200\" height=\"200\"><path d=\"M394.666667 106.666667h448a74.666667 74.666667 0 0 1 74.666666 74.666666v448a74.666667 74.666667 0 0 1-74.666666 74.666667H394.666667a74.666667 74.666667 0 0 1-74.666667-74.666667V181.333333a74.666667 74.666667 0 0 1 74.666667-74.666666z m0 64a10.666667 10.666667 0 0 0-10.666667 10.666666v448a10.666667 10.666667 0 0 0 10.666667 10.666667h448a10.666667 10.666667 0 0 0 10.666666-10.666667V181.333333a10.666667 10.666667 0 0 0-10.666666-10.666666H394.666667z m245.333333 597.333333a32 32 0 0 1 64 0v74.666667a74.666667 74.666667 0 0 1-74.666667 74.666666H181.333333a74.666667 74.666667 0 0 1-74.666666-74.666666V394.666667a74.666667 74.666667 0 0 1 74.666666-74.666667h74.666667a32 32 0 0 1 0 64h-74.666667a10.666667 10.666667 0 0 0-10.666666 10.666667v448a10.666667 10.666667 0 0 0 10.666666 10.666666h448a10.666667 10.666667 0 0 0 10.666667-10.666666v-74.666667z\" fill=\"#000000\" p-id=\"4272\"></path></svg>\n  </div>\n  <p>联系作者（微信）</p>\n  <p><img style=\"width: 100%; max-width: 200px; max-height: 200px; display: block; margin: 0 auto;\" src=\"./assets/images/wx_qrcode.jpg\"></p>\n",
-  shareText = "电子木鱼，功德无量，进入 " + siteUrl + " 敲电子木鱼，积累功德，自动功德机",
-  setDiyHtml = "\n  <div class=\"diy-main\">\n    <div class=\"diy-item\">\n      <input type=\"radio\" id=\"radio1\" name=\"tappingPrompt\">\n      <label for=\"radio1\" class=\"ui-radio\"></label><label class=\"ui-radio-text\" for=\"radio1\">" + defaultTappingPrompt + "</label>\n    </div>\n    <div class=\"diy-item\">\n      <input type=\"radio\" id=\"radio2\" name=\"tappingPrompt\">\n      <label for=\"radio2\" class=\"ui-radio\"></label><label class=\"ui-radio-text\" for=\"radio2\">平安喜乐，功德 + 1</label>\n    </div>\n    <div class=\"diy-item\">\n      <input type=\"radio\" id=\"radio3\" name=\"tappingPrompt\">\n      <label for=\"radio3\" class=\"ui-radio\"></label><label class=\"ui-radio-text\" for=\"radio3\">烦恼 - 1，功德 + 1</label>\n    </div>\n    <div class=\"diy-item\">\n      <input type=\"radio\" id=\"radioCustom\" name=\"tappingPrompt\">\n      <label for=\"radioCustom\" class=\"ui-radio\"></label><label class=\"ui-radio-text\" for=\"radioCustom\">自定义</label>\n    </div>\n    <div class=\"diy-item\">\n      <input id=\"diyContent\" class=\"ui-input\" value=\"\" placeholder=\"请输入不超过15字节的内容\">\n    </div>\n  </div>\n",
-  autoClickHtml = "\n  <p>如想开启自动敲击能力，希望您完成以下操作：</p>\n  <p>1.复制以下内容，分享至3个以上群聊</p>\n  <p>\n    <div class=\"ui-input ui-input-search\" align=\"right\">\n      <input type=\"search\" readonly value=\"" + siteUrl + "\">\n      <svg onclick=\"autoClickCopy()\" class=\"ui-icon-search\" viewBox=\"0 0 1024 1024\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" p-id=\"4271\" width=\"200\" height=\"200\"><path d=\"M394.666667 106.666667h448a74.666667 74.666667 0 0 1 74.666666 74.666666v448a74.666667 74.666667 0 0 1-74.666666 74.666667H394.666667a74.666667 74.666667 0 0 1-74.666667-74.666667V181.333333a74.666667 74.666667 0 0 1 74.666667-74.666666z m0 64a10.666667 10.666667 0 0 0-10.666667 10.666666v448a10.666667 10.666667 0 0 0 10.666667 10.666667h448a10.666667 10.666667 0 0 0 10.666666-10.666667V181.333333a10.666667 10.666667 0 0 0-10.666666-10.666666H394.666667z m245.333333 597.333333a32 32 0 0 1 64 0v74.666667a74.666667 74.666667 0 0 1-74.666667 74.666666H181.333333a74.666667 74.666667 0 0 1-74.666666-74.666666V394.666667a74.666667 74.666667 0 0 1 74.666666-74.666667h74.666667a32 32 0 0 1 0 64h-74.666667a10.666667 10.666667 0 0 0-10.666666 10.666667v448a10.666667 10.666667 0 0 0 10.666666 10.666666h448a10.666667 10.666667 0 0 0 10.666667-10.666666v-74.666667z\" fill=\"#000000\" p-id=\"4272\"></path></svg>\n    </div>\n  </p>\n  <p>\n    <input type=\"checkbox\" id=\"autoClickCheckbox\" name=\"autoClickCheckbox\">\n    <label for=\"autoClickCheckbox\" class=\"ui-checkbox\"></label><label for=\"autoClickCheckbox\">确认开启自动敲木鱼</label>\n  </p>\n";
-function instructionsCopy() {
-  copyTextToClipboard(siteUrl, function () {
-    new LightTip().success("复制成功");
-  }, function () {
-    new LightTip().error("复制失败");
-  });
-}
-function autoClickCopy() {
-  copyTextToClipboard(shareText, function () {
-    new LightTip().success("复制成功");
-  }, function () {
-    new LightTip().error("复制失败");
-  });
-}
-const sound = new Howl({
-    "src": ["./assets/video/sound.mp3"]
-  }),
-  bgm = new Howl({
-    "src": ["./assets/video/bgm.mp3"],
-    "html5": true,
-    "loop": true,
-    "volume": 0.2
-  });
-function hideLoading() {
-  const _0xf4e14b = document.querySelector("#loading");
-  _0xf4e14b && _0xf4e14b.remove();
-}
-window.onload = () => {
-  hideLoading();
-  let _0x3c19c3 = 0,
-    _0x2b95e6 = 0,
-    _0x24592b = 0,
-    _0x15b752 = false,
-    _0x78250b = false,
-    _0x485a04 = null,
-    _0x2b80f2 = document.querySelector(".count"),
-    _0x60b8a7 = document.querySelector(".wooden-fish"),
-    _0x36d879 = document.querySelector("#autoClick"),
-    _0x49d4b8 = document.querySelector("#center"),
-    _0x46b762 = document.querySelector("#instructions"),
-    _0x2dc4f0 = document.querySelector("#share"),
-    _0xd2ac1 = document.querySelector("#immersionSwitch"),
-    _0x54362a = document.querySelector("#wishDiy"),
-    _0x21bad4 = document.querySelector("#woodenHammer");
-  const _0x5cb100 = localStorage.getItem("count");
-  if (_0x5cb100) {
-    _0x24592b = Number(_0x5cb100);
-    _0x2b80f2.innerHTML = String(_0x24592b);
+const $ = new Env("闲趣赚3.24");
+let status;
+status = (status = $.getval("xqzstatus") || "1") > 1 ? "" + status : "";
+let xqzckArr = [];
+let xqzck = ($.isNode() ? process.env.xqzck : $.getdata("xqzck")) || "";
+let xqzid = "",
+  xqztk = "";
+!(async () => {
+  if (typeof $request !== "undefined") {
+    await xqzck();
+  } else {
+    xqzckArr = xqzck.split("@");
+    console.log("------------- 共" + xqzckArr.length + "个账号-------------\n");
+    for (let _0x2c0f0c = 0; _0x2c0f0c < xqzckArr.length; _0x2c0f0c++) {
+      xqzck = xqzckArr[_0x2c0f0c];
+      $.index = _0x2c0f0c + 1;
+      console.log("\n开始【闲趣赚" + $.index + "】");
+      await xqzlb();
+      await xqzxx();
+    }
   }
-  function _0x5c2b69() {
-    _0x2b80f2.style.transform = "scale(1.1)";
-    _0x60b8a7.style.transform = "scale(.95)";
-    _0x21bad4.classList.add("hammer-start");
-    _0x49d4b8.appendChild(_0x21bad4);
-    const _0x3180b7 = document.createElement("div");
-    _0x3180b7.classList.add("subtitle-countTip");
-    _0x3180b7.innerText = tappingPrompt;
-    _0x49d4b8.appendChild(_0x3180b7);
-    setTimeout(() => {
-      _0x3180b7.remove();
-    }, 1000);
-  }
-  function _0x3dc934() {
-    _0x2b80f2.style.transform = "scale(1)";
-    _0x60b8a7.style.transform = "scale(1)";
-  }
-  function _0x2a1534() {
-    _0x15b752 = true;
-    _0x24592b++;
-    _0x2b80f2.innerHTML = String(_0x24592b);
-    _0x5c2b69();
-    _0x3c19c3 !== 0 ? (sound.playing() && sound.stop(_0x3c19c3), sound.play(_0x3c19c3)) : _0x3c19c3 = sound.play();
-    localStorage.setItem("count", String(_0x24592b));
-  }
-  document.onkeyup = _0x28f54f => {
-    _0x28f54f.key === " " && !_0x15b752 && _0x2a1534();
-  };
-  document.onkeydown = _0x42460b => {
-    _0x42460b.key === " " && (_0x15b752 = false, _0x3dc934());
-  };
-  _0x60b8a7.addEventListener("mouseup", () => {
-    _0x2a1534();
-  });
-  _0x60b8a7.addEventListener("mousedown", () => {
-    setTimeout(() => {
-      _0x3dc934();
-    }, 200);
-  });
-  _0x36d879.addEventListener("click", () => {
-    _0x78250b ? (_0x78250b = false, _0x36d879.classList.remove("confirm"), clearInterval(_0x485a04)) : new Dialog({
-      "title": "VIP自动敲",
-      "content": autoClickHtml,
-      "buttons": [{
-        "value": "确定",
-        "events": function (_0x8e9532) {
-          const _0x3a043c = document.querySelector("#autoClickCheckbox");
-          _0x3a043c.checked ? (_0x36d879.classList.add("confirm"), clearInterval(_0x485a04), _0x485a04 = setInterval(() => {
-            _0x2a1534();
-            setTimeout(() => {
-              _0x3dc934();
-            }, 200);
-          }, 500), LA.track("autoCick")) : (_0x36d879.classList.remove("confirm"), clearInterval(_0x485a04));
-          _0x78250b = _0x3a043c.checked;
-          _0x8e9532.dialog.remove();
-        }
-      }],
-      "onShow": () => {
-        const _0x173c9d = document.querySelector("#autoClickCheckbox");
-        _0x173c9d.checked = _0x78250b;
-      }
-    });
-  });
-  _0x46b762.addEventListener("click", () => {
-    new Dialog({
-      "title": "说明",
-      "content": instructionsHtml,
-      "buttons": [{
-        "value": "好的"
-      }]
-    });
-    LA.track("instructionsButton");
-  });
-  _0x2dc4f0.addEventListener("click", () => {
-    copyTextToClipboard(shareText, function () {
-      new Dialog().alert("复制链接成功，分享给好友，佛祖保佑你", {
-        "type": "",
-        "buttons": [{
-          "value": "好的"
-        }]
-      });
-      LA.track("shareButton");
-    }, function () {
-      new LightTip().error("复制失败");
-    });
-  });
-  _0xd2ac1.addEventListener("input", () => {
-    _0xd2ac1.checked ? (_0x2b95e6 !== 0 ? bgm.play(_0x2b95e6) : _0x2b95e6 = bgm.play(), LA.track("immersionSwitch")) : bgm.pause(_0x2b95e6);
-  });
-  _0x54362a.addEventListener("click", () => {
-    new Dialog({
-      "title": "心愿DIY",
-      "content": setDiyHtml,
-      "buttons": [{
-        "value": "确定",
-        "events": function (_0x381ab7) {
-          const _0x30ab2c = document.querySelectorAll("input[name=\"tappingPrompt\"]"),
-            _0x2a582a = Array.from(_0x30ab2c).find(_0x4cc910 => _0x4cc910.checked),
-            _0x5531e0 = document.querySelector("#diyContent");
-          if (_0x2a582a) {
-            const _0x18288b = document.querySelectorAll("label[for=\"" + _0x2a582a.id + "\"]")[1].innerText;
-            if (_0x18288b === "自定义") {
-              if (_0x5531e0.value) {
-                if (_0x5531e0.value.length > 15) return new LightTip().error("自定义内容过长，请删减"), false;else tappingPrompt = _0x5531e0.value;
-              } else return new LightTip().error("请输入自定义内容"), false;
-            } else tappingPrompt = _0x18288b;
-            localStorage.setItem("tappingPrompt", tappingPrompt);
-          } else {
-            return new LightTip().error("请选择DIY内容"), false;
-          }
-          _0x381ab7.dialog.remove();
-          LA.track("wishDiy");
-        }
-      }],
-      "onShow": () => {
-        let _0x3f618e = localStorage.getItem("tappingPrompt");
-        !_0x3f618e && (_0x3f618e = defaultTappingPrompt);
-        const _0x352105 = document.querySelectorAll("label[class=\"ui-radio-text\"]"),
-          _0x342da2 = Array.from(_0x352105).find(_0x14e7d7 => {
-            return _0x14e7d7.innerHTML === _0x3f618e;
-          });
-        let _0x4c9587 = null;
-        if (_0x342da2) _0x4c9587 = document.querySelector("input[id=\"" + _0x342da2.getAttribute("for") + "\"]");else {
-          _0x4c9587 = document.querySelector("input[id=\"radioCustom\"]");
-          const _0x4fd4ad = document.querySelector("#diyContent");
-          _0x4fd4ad.value = _0x3f618e;
-        }
-        _0x4c9587.checked = true;
-      }
-    });
-  });
-};
-function remChange(_0x59de28, _0x2b59dc) {
-  let _0x1c01e2 = _0x59de28.documentElement,
-    _0x476283 = "orientationchange" in window ? "orientationchange" : "resize",
-    _0xe1a46b = function () {
-      var _0x99c6ea = _0x1c01e2.clientWidth;
-      if (!_0x99c6ea) return;
-      _0x99c6ea >= 640 ? _0x1c01e2.style.fontSize = "100px" : _0x1c01e2.style.fontSize = 100 * (_0x99c6ea / 640) + "px";
+})().catch(_0x848d15 => $.logErr(_0x848d15)).finally(() => $.done());
+function xqzlb(_0x8d8167 = 0) {
+  return new Promise(_0x28fe4c => {
+    let _0x3df897 = {
+      "url": "https://wap.quxianzhuan.com/reward/browse/index/?xapp-target=blank",
+      "headers": JSON.parse("{\"Host\":\"wap.quxianzhuan.com\",\"Connection\":\"keep-alive\",\"Upgrade-Insecure-Requests\":\"1\",\"User-Agent\":\"Mozilla/5.0 (Linux; Android 10; 16s Pro Build/QKQ1.191222.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.106 Mobile Safari/537.36  XiaoMi/MiuiBrowser/10.8.1 LT-APP/44/200\",\"Accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\",\"x-app\":\"96c1ea5a-9a52-44c9-8ac4-8dceafa065c8\",\"X-Requested-With\":\"com.quxianzhuan.wap\",\"Sec-Fetch-Site\":\"none\",\"Sec-Fetch-Mode\":\"navigate\",\"Sec-Fetch-User\":\"?1\",\"Sec-Fetch-Dest\":\"document\",\"Referer\":\"https://wap.quxianzhuan.com/reward/list/?xapp-target=blank\",\"Accept-Encoding\":\"gzip, deflate\",\"Accept-Language\":\"zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7\",\"Cookie\":\"" + xqzck + "\"}")
     };
-  if (!_0x59de28.addEventListener) return;
-  _0x2b59dc.addEventListener(_0x476283, _0xe1a46b, false);
-  _0x59de28.addEventListener("DOMContentLoaded", _0xe1a46b, false);
-  _0xe1a46b();
+    $.get(_0x3df897, async (_0x190220, _0x3af933, _0x409111) => {
+      try {
+        xqzid = _0x409111.match(/reward_id":"(\d+)",/)[1];
+        xqztk = xqzck.match(/tzb_formhash_cookie=(\w+);/)[1];
+        console.log("\n闲趣赚匹配任务ID：" + xqzid);
+        await xqzrw();
+      } catch (_0x32f4e6) {} finally {
+        _0x28fe4c();
+      }
+    }, _0x8d8167);
+  });
 }
-remChange(document, window);
-function copyTextToClipboard(_0x3c651c, _0x2aa175, _0x58c1a9) {
-  const _0x4360c7 = document.createElement("textarea");
-  _0x4360c7.value = _0x3c651c;
-  _0x4360c7.setAttribute("readonly", "");
-  _0x4360c7.style.position = "absolute";
-  _0x4360c7.style.left = "-9999px";
-  document.body.appendChild(_0x4360c7);
-  _0x4360c7.select();
-  try {
-    const _0xa4521c = document.execCommand("copy");
-    if (_0xa4521c) {
-      typeof _0x2aa175 === "function" && _0x2aa175();
-    } else typeof _0x58c1a9 === "function" && _0x58c1a9();
-  } catch (_0x1b1f07) {
-    typeof _0x58c1a9 === "function" && _0x58c1a9();
+function xqzrw(_0x2888ee = 0) {
+  return new Promise(_0x41ce33 => {
+    let _0x579dd9 = {
+      "url": "https://wap.quxianzhuan.com/reward/browse/append/",
+      "headers": JSON.parse("{\"Host\":\"wap.quxianzhuan.com\",\"Connection\":\"keep-alive\",\"Upgrade-Insecure-Requests\":\"1\",\"User-Agent\":\"Mozilla/5.0 (Linux; Android 10; 16s Pro Build/QKQ1.191222.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.106 Mobile Safari/537.36  XiaoMi/MiuiBrowser/10.8.1 LT-APP/44/200\",\"Accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\",\"x-app\":\"96c1ea5a-9a52-44c9-8ac4-8dceafa065c8\",\"X-Requested-With\":\"com.quxianzhuan.wap\",\"Sec-Fetch-Site\":\"none\",\"Sec-Fetch-Mode\":\"navigate\",\"Sec-Fetch-User\":\"?1\",\"Sec-Fetch-Dest\":\"document\",\"Referer\":\"https://wap.quxianzhuan.com/reward/list/?xapp-target=blank\",\"Accept-Encoding\":\"gzip, deflate\",\"Accept-Language\":\"zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7\",\"Cookie\":\"" + xqzck + "\"}"),
+      "body": "reward_id=" + xqzid + "&formhash=" + xqztk + "&inajax=1"
+    };
+    $.post(_0x579dd9, async (_0x216874, _0x50e484, _0x53fa76) => {
+      try {
+        const _0x35ebda = JSON.parse(_0x53fa76);
+        if (_0x35ebda.state == 1) {
+          console.log("\n闲趣赚任务：" + _0x35ebda.msg + "等待10秒继续下一任务");
+          await $.wait(11000);
+          await xqzlb();
+        } else {
+          console.log("\n闲趣赚任务：" + _0x35ebda.msg);
+        }
+      } catch (_0x1ec8c9) {} finally {
+        _0x41ce33();
+      }
+    }, _0x2888ee);
+  });
+}
+function xqzxx(_0x330473 = 0) {
+  return new Promise(_0x51f24f => {
+    let _0x54f1fa = {
+      "url": "https://wap.quxianzhuan.com/user/",
+      "headers": JSON.parse("{\"Host\":\"wap.quxianzhuan.com\",\"Connection\":\"keep-alive\",\"Upgrade-Insecure-Requests\":\"1\",\"User-Agent\":\"Mozilla/5.0 (Linux; Android 10; 16s Pro Build/QKQ1.191222.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.106 Mobile Safari/537.36  XiaoMi/MiuiBrowser/10.8.1 LT-APP/44/200\",\"Accept\":\"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\",\"x-app\":\"96c1ea5a-9a52-44c9-8ac4-8dceafa065c8\",\"X-Requested-With\":\"com.quxianzhuan.wap\",\"Sec-Fetch-Site\":\"none\",\"Sec-Fetch-Mode\":\"navigate\",\"Sec-Fetch-User\":\"?1\",\"Sec-Fetch-Dest\":\"document\",\"Referer\":\"https://wap.quxianzhuan.com/reward/list/?xapp-target=blank\",\"Accept-Encoding\":\"gzip, deflate\",\"Accept-Language\":\"zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7\",\"Cookie\":\"" + xqzck + "\"}")
+    };
+    $.get(_0x54f1fa, async (_0x3bfce3, _0x1a61ad, _0x4ac891) => {
+      try {
+        let _0x31cd8c = _0x4ac891.match(/available_money":(.+?),"/)[1];
+        let _0x318a42 = _0x4ac891.match(/UID：(.+?)\<\/span\>/)[1];
+        console.log("\n闲趣赚靓仔用户：【" + _0x318a42 + "】 - 可提现余额【" + _0x31cd8c + "】");
+      } catch (_0x147b1e) {} finally {
+        _0x51f24f();
+      }
+    }, _0x330473);
+  });
+}
+function rand(_0x55047e, _0x5f4ee9) {
+  return parseInt(Math.random() * (_0x5f4ee9 - _0x55047e + 1) + _0x55047e, 10);
+}
+_0xodm = "jsjiami.com.v6";
+function Env(t, e) {
+  class s {
+    constructor(t) {
+      this.env = t;
+    }
+    send(t, e = "GET") {
+      t = "string" == typeof t ? {
+        url: t
+      } : t;
+      let s = this.get;
+      return "POST" === e && (s = this.post), new Promise((e, i) => {
+        s.call(this, t, (t, s, r) => {
+          t ? i(t) : e(s);
+        });
+      });
+    }
+    get(t) {
+      return this.send.call(this.env, t);
+    }
+    post(t) {
+      return this.send.call(this.env, t, "POST");
+    }
   }
-  document.body.removeChild(_0x4360c7);
+  return new class {
+    constructor(t, e) {
+      this.name = t;
+      this.http = new s(this);
+      this.data = null;
+      this.dataFile = "box.dat";
+      this.logs = [];
+      this.isMute = !1;
+      this.isNeedRewrite = !1;
+      this.logSeparator = "\n";
+      this.startTime = new Date().getTime();
+      Object.assign(this, e);
+      this.log("", `\ud83d\udd14${this.name}, \u5f00\u59cb!`);
+    }
+    isNode() {
+      return "undefined" != typeof module && !!module.exports;
+    }
+    isQuanX() {
+      return "undefined" != typeof $task;
+    }
+    isSurge() {
+      return "undefined" != typeof $httpClient && "undefined" == typeof $loon;
+    }
+    isLoon() {
+      return "undefined" != typeof $loon;
+    }
+    toObj(t, e = null) {
+      try {
+        return JSON.parse(t);
+      } catch {
+        return e;
+      }
+    }
+    toStr(t, e = null) {
+      try {
+        return JSON.stringify(t);
+      } catch {
+        return e;
+      }
+    }
+    getjson(t, e) {
+      let s = e;
+      const i = this.getdata(t);
+      if (i) try {
+        s = JSON.parse(this.getdata(t));
+      } catch {}
+      return s;
+    }
+    setjson(t, e) {
+      try {
+        return this.setdata(JSON.stringify(t), e);
+      } catch {
+        return !1;
+      }
+    }
+    getScript(t) {
+      return new Promise(e => {
+        this.get({
+          url: t
+        }, (t, s, i) => e(i));
+      });
+    }
+    runScript(t, e) {
+      return new Promise(s => {
+        let i = this.getdata("@chavy_boxjs_userCfgs.httpapi");
+        i = i ? i.replace(/\n/g, "").trim() : i;
+        let r = this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");
+        r = r ? 1 * r : 20;
+        r = e && e.timeout ? e.timeout : r;
+        const [o, h] = i.split("@"),
+          a = {
+            url: `http://${h}/v1/scripting/evaluate`,
+            body: {
+              script_text: t,
+              mock_type: "cron",
+              timeout: r
+            },
+            headers: {
+              "X-Key": o,
+              Accept: "*/*"
+            }
+          };
+        this.post(a, (t, e, i) => s(i));
+      }).catch(t => this.logErr(t));
+    }
+    loaddata() {
+      if (!this.isNode()) return {};
+      {
+        this.fs = this.fs ? this.fs : require("fs");
+        this.path = this.path ? this.path : require("path");
+        const t = this.path.resolve(this.dataFile),
+          e = this.path.resolve(process.cwd(), this.dataFile),
+          s = this.fs.existsSync(t),
+          i = !s && this.fs.existsSync(e);
+        if (!s && !i) return {};
+        {
+          const i = s ? t : e;
+          try {
+            return JSON.parse(this.fs.readFileSync(i));
+          } catch (t) {
+            return {};
+          }
+        }
+      }
+    }
+    writedata() {
+      if (this.isNode()) {
+        this.fs = this.fs ? this.fs : require("fs");
+        this.path = this.path ? this.path : require("path");
+        const t = this.path.resolve(this.dataFile),
+          e = this.path.resolve(process.cwd(), this.dataFile),
+          s = this.fs.existsSync(t),
+          i = !s && this.fs.existsSync(e),
+          r = JSON.stringify(this.data);
+        s ? this.fs.writeFileSync(t, r) : i ? this.fs.writeFileSync(e, r) : this.fs.writeFileSync(t, r);
+      }
+    }
+    lodash_get(t, e, s) {
+      const i = e.replace(/\[(\d+)\]/g, ".$1").split(".");
+      let r = t;
+      for (const t of i) if (r = Object(r)[t], void 0 === r) return s;
+      return r;
+    }
+    lodash_set(t, e, s) {
+      return Object(t) !== t ? t : (Array.isArray(e) || (e = e.toString().match(/[^.[\]]+/g) || []), e.slice(0, -1).reduce((t, s, i) => Object(t[s]) === t[s] ? t[s] : t[s] = Math.abs(e[i + 1]) >> 0 == +e[i + 1] ? [] : {}, t)[e[e.length - 1]] = s, t);
+    }
+    getdata(t) {
+      let e = this.getval(t);
+      if (/^@/.test(t)) {
+        const [, s, i] = /^@(.*?)\.(.*?)$/.exec(t),
+          r = s ? this.getval(s) : "";
+        if (r) try {
+          const t = JSON.parse(r);
+          e = t ? this.lodash_get(t, i, "") : e;
+        } catch (t) {
+          e = "";
+        }
+      }
+      return e;
+    }
+    setdata(t, e) {
+      let s = false;
+      if (/^@/.test(e)) {
+        const [, i, r] = /^@(.*?)\.(.*?)$/.exec(e),
+          o = this.getval(i),
+          h = i ? "null" === o ? null : o || "{}" : "{}";
+        try {
+          const e = JSON.parse(h);
+          this.lodash_set(e, r, t);
+          s = this.setval(JSON.stringify(e), i);
+        } catch (e) {
+          const o = {};
+          this.lodash_set(o, r, t);
+          s = this.setval(JSON.stringify(o), i);
+        }
+      } else s = this.setval(t, e);
+      return s;
+    }
+    getval(t) {
+      return this.isSurge() || this.isLoon() ? $persistentStore.read(t) : this.isQuanX() ? $prefs.valueForKey(t) : this.isNode() ? (this.data = this.loaddata(), this.data[t]) : this.data && this.data[t] || null;
+    }
+    setval(t, e) {
+      return this.isSurge() || this.isLoon() ? $persistentStore.write(t, e) : this.isQuanX() ? $prefs.setValueForKey(t, e) : this.isNode() ? (this.data = this.loaddata(), this.data[e] = t, this.writedata(), !0) : this.data && this.data[e] || null;
+    }
+    initGotEnv(t) {
+      this.got = this.got ? this.got : require("got");
+      this.cktough = this.cktough ? this.cktough : require("tough-cookie");
+      this.ckjar = this.ckjar ? this.ckjar : new this.cktough.CookieJar();
+      t && (t.headers = t.headers ? t.headers : {}, void 0 === t.headers.Cookie && void 0 === t.cookieJar && (t.cookieJar = this.ckjar));
+    }
+    get(t, e = () => {}) {
+      t.headers && (delete t.headers["Content-Type"], delete t.headers["Content-Length"]);
+      this.isSurge() || this.isLoon() ? (this.isSurge() && this.isNeedRewrite && (t.headers = t.headers || {}, Object.assign(t.headers, {
+        "X-Surge-Skip-Scripting": !1
+      })), $httpClient.get(t, (t, s, i) => {
+        !t && s && (s.body = i, s.statusCode = s.status);
+        e(t, s, i);
+      })) : this.isQuanX() ? (this.isNeedRewrite && (t.opts = t.opts || {}, Object.assign(t.opts, {
+        hints: !1
+      })), $task.fetch(t).then(t => {
+        const {
+          statusCode: s,
+          statusCode: i,
+          headers: r,
+          body: o
+        } = t;
+        e(null, {
+          status: s,
+          statusCode: i,
+          headers: r,
+          body: o
+        }, o);
+      }, t => e(t))) : this.isNode() && (this.initGotEnv(t), this.got(t).on("redirect", (t, e) => {
+        try {
+          if (t.headers["set-cookie"]) {
+            const s = t.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();
+            this.ckjar.setCookieSync(s, null);
+            e.cookieJar = this.ckjar;
+          }
+        } catch (t) {
+          this.logErr(t);
+        }
+      }).then(t => {
+        const {
+          statusCode: s,
+          statusCode: i,
+          headers: r,
+          body: o
+        } = t;
+        e(null, {
+          status: s,
+          statusCode: i,
+          headers: r,
+          body: o
+        }, o);
+      }, t => {
+        const {
+          message: s,
+          response: i
+        } = t;
+        e(s, i, i && i.body);
+      }));
+    }
+    post(t, e = () => {}) {
+      if (t.body && t.headers && !t.headers["Content-Type"] && (t.headers["Content-Type"] = "application/x-www-form-urlencoded"), t.headers && delete t.headers["Content-Length"], this.isSurge() || this.isLoon()) {
+        this.isSurge() && this.isNeedRewrite && (t.headers = t.headers || {}, Object.assign(t.headers, {
+          "X-Surge-Skip-Scripting": !1
+        }));
+        $httpClient.post(t, (t, s, i) => {
+          !t && s && (s.body = i, s.statusCode = s.status);
+          e(t, s, i);
+        });
+      } else if (this.isQuanX()) {
+        t.method = "POST";
+        this.isNeedRewrite && (t.opts = t.opts || {}, Object.assign(t.opts, {
+          hints: !1
+        }));
+        $task.fetch(t).then(t => {
+          const {
+            statusCode: s,
+            statusCode: i,
+            headers: r,
+            body: o
+          } = t;
+          e(null, {
+            status: s,
+            statusCode: i,
+            headers: r,
+            body: o
+          }, o);
+        }, t => e(t));
+      } else if (this.isNode()) {
+        this.initGotEnv(t);
+        const {
+          url: s,
+          ...i
+        } = t;
+        this.got.post(s, i).then(t => {
+          const {
+            statusCode: s,
+            statusCode: i,
+            headers: r,
+            body: o
+          } = t;
+          e(null, {
+            status: s,
+            statusCode: i,
+            headers: r,
+            body: o
+          }, o);
+        }, t => {
+          const {
+            message: s,
+            response: i
+          } = t;
+          e(s, i, i && i.body);
+        });
+      }
+    }
+    time(t) {
+      let e = {
+        "M+": new Date().getMonth() + 1,
+        "d+": new Date().getDate(),
+        "H+": new Date().getHours(),
+        "m+": new Date().getMinutes(),
+        "s+": new Date().getSeconds(),
+        "q+": Math.floor((new Date().getMonth() + 3) / 3),
+        S: new Date().getMilliseconds()
+      };
+      /(y+)/.test(t) && (t = t.replace(RegExp.$1, (new Date().getFullYear() + "").substr(4 - RegExp.$1.length)));
+      for (let s in e) new RegExp("(" + s + ")").test(t) && (t = t.replace(RegExp.$1, 1 == RegExp.$1.length ? e[s] : ("00" + e[s]).substr(("" + e[s]).length)));
+      return t;
+    }
+    msg(e = t, s = "", i = "", r) {
+      const o = t => {
+        if (!t) return t;
+        if ("string" == typeof t) return this.isLoon() ? t : this.isQuanX() ? {
+          "open-url": t
+        } : this.isSurge() ? {
+          url: t
+        } : void 0;
+        if ("object" == typeof t) {
+          if (this.isLoon()) {
+            let e = t.openUrl || t.url || t["open-url"],
+              s = t.mediaUrl || t["media-url"];
+            return {
+              openUrl: e,
+              mediaUrl: s
+            };
+          }
+          if (this.isQuanX()) {
+            let e = t["open-url"] || t.url || t.openUrl,
+              s = t["media-url"] || t.mediaUrl;
+            return {
+              "open-url": e,
+              "media-url": s
+            };
+          }
+          if (this.isSurge()) {
+            let e = t.url || t.openUrl || t["open-url"];
+            return {
+              url: e
+            };
+          }
+        }
+      };
+      this.isMute || (this.isSurge() || this.isLoon() ? $notification.post(e, s, i, o(r)) : this.isQuanX() && $notify(e, s, i, o(r)));
+      let h = ["", "==============📣系统通知📣=============="];
+      h.push(e);
+      s && h.push(s);
+      i && h.push(i);
+      console.log(h.join("\n"));
+      this.logs = this.logs.concat(h);
+    }
+    log(...t) {
+      t.length > 0 && (this.logs = [...this.logs, ...t]);
+      console.log(t.join(this.logSeparator));
+    }
+    logErr(t, e) {
+      const s = !this.isSurge() && !this.isQuanX() && !this.isLoon();
+      s ? this.log("", `\u2757\ufe0f${this.name}, \u9519\u8bef!`, t.stack) : this.log("", `\u2757\ufe0f${this.name}, \u9519\u8bef!`, t);
+    }
+    wait(t) {
+      return new Promise(e => setTimeout(e, t));
+    }
+    done(t = {}) {
+      const e = new Date().getTime(),
+        s = (e - this.startTime) / 1000;
+      this.log("", `\ud83d\udd14${this.name}, \u7ed3\u675f! \ud83d\udd5b ${s} \u79d2`);
+      this.log();
+      (this.isSurge() || this.isQuanX() || this.isLoon()) && $done(t);
+    }
+  }(t, e);
 }
